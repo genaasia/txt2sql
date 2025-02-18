@@ -1,2 +1,2 @@
 # txt2sql pypi
-# latest: Feb 17, 2025
+# latest update: Feb 17, 2025
