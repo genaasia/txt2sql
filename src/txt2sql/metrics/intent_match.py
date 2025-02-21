@@ -97,7 +97,7 @@ def intent_match(
             ground_truth_val, (int, float, decimal.Decimal)
         ):
             return ground_truth_val is not None and (
-                str(round(predicted_val, 1)) == str(round(ground_truth_val, 1))
+                round(float(predicted_val), 1) == round(float(ground_truth_val), 1)
             )
         return str(predicted_val) == str(ground_truth_val)
 
