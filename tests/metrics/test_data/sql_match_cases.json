@@ -1,0 +1,30 @@
+{
+    "perfect_matches": [
+      {
+        "name": "exact_match",
+        "prediction": "SELECT `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` FROM frpm WHERE `Educational Option Type` = 'Continuation School' AND `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` IS NOT NULL ORDER BY `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` ASC LIMIT 3",
+        "ground_truth": "SELECT `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` FROM frpm WHERE `Educational Option Type` = 'Continuation School' AND `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` IS NOT NULL ORDER BY `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` ASC LIMIT 3",
+        "expected": true
+      }
+    ],
+    "different_white_space_and_casing": [
+      {
+        "name": "different_spaces",
+        "prediction": "SELECT AVG(CAST(SUBSTR(T2.fastestLapTime, 1, INSTR(T2.fastestLapTime, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(T2.fastestLapTime, INSTR(T2.fastestLapTime, ':') + 1) AS REAL)) FROM drivers AS T1 INNER JOIN results AS T2 ON T1.driverId = T2.driverId WHERE T1.surname = 'Hamilton' AND T1.forename = 'Lewis'",
+        "ground_truth": " SELECT    AVG (CAST ( SUBSTR(T2.fastestLapTime , 1 , INSTR(T2.fastestLapTime, ':') - 1 ) AS INTEGER) * 60 +     CAST(SUBSTR(T2.fastestLapTime , INSTR ( T2.fastestLapTime , ':') + 1 ) AS REAL ) ) FROM drivers  AS   T1 INNER JOIN results AS  T2 ON T1.driverId =T2.driverId WHERE T1.surname= 'Hamilton' AND T1.forename='Lewis' ",
+        "expected": true
+      },
+      {
+        "name": "different_spaces_and_newlines",
+        "prediction": "SELECT COUNT(T2.`School Code`) FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.`Charter Funding Type` = 'Directly funded'",
+        "ground_truth": "  SELECT   COUNT(T2.`School Code`)  \n FROM satscores AS T1 \n INNER     JOIN frpm AS T2 ON T1.cds=T2.CDSCode \n WHERE T1.AvgScrMath>560 \n AND T2.`Charter Funding Type` = 'Directly funded' ",
+        "expected": true
+      },
+      {
+        "name": "different_casing_and_whitespace",
+        "prediction": "SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID ORDER BY Date ASC LIMIT 1",
+        "ground_truth": "select T2.Segment \n from transactions_1k as T1 \n inner join customers as T2 on T1.CustomerID=T2.CustomerID  order by   Date asc limit 1",
+        "expected": true
+      }
+    ]
+  }

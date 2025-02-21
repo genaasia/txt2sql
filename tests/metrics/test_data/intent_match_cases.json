@@ -1,0 +1,74 @@
+{
+    "basic_matches": [
+      {
+        "name": "exact_match",
+        "prediction": [{"val": 1, "name": "test"}],
+        "ground_truth": [{"val": 1, "name": "test"}],
+        "expected": true
+      },
+      {
+        "name": "case_insensitive_match",
+        "prediction": [{"NAME": "John", "AGE": 30}],
+        "ground_truth": [{"name": "John", "age": 30}],
+        "expected": true
+      }
+    ],
+    "date_formats": [
+      {
+        "name": "different_date_formats",
+        "prediction": [{"date": "2023-10-01"}],
+        "ground_truth": [{"date": "2023-10-01T00:00:00"}],
+        "normalize_dates": true,
+        "expected": true
+      },
+      {
+        "name": "year_month_format",
+        "prediction": [{"date": "2023-10"}],
+        "ground_truth": [{"date": "2023-10-01"}],
+        "normalize_dates": true,
+        "expected": true
+      }
+    ],
+    "type_conversions": [
+      {
+        "name": "int_float_match",
+        "prediction": [{"val": 1}],
+        "ground_truth": [{"val": 1.0}],
+        "expected": true
+      },
+      {
+        "name": "null_zero_equivalence",
+        "prediction": [{"val": null}],
+        "ground_truth": [{"val": 0}],
+        "expected": true
+      }
+    ],
+    "string_handling": [
+      {
+        "name": "quote_removal",
+        "prediction": [{"name": "\"John\""}],
+        "ground_truth": [{"name": "John"}],
+        "expected": true
+      },
+      {
+        "name": "multiple_quotes",
+        "prediction": [{"name": "\"\"John\"\""}],
+        "ground_truth": [{"name": "John"}],
+        "expected": true
+      }
+    ],
+    "mismatches": [
+      {
+        "name": "different_values",
+        "prediction": [{"val": 1}],
+        "ground_truth": [{"val": 2}],
+        "expected": false
+      },
+      {
+        "name": "different_row_counts",
+        "prediction": [{"val": 1}, {"val": 2}],
+        "ground_truth": [{"val": 1}],
+        "expected": false
+      }
+    ]
+  }
