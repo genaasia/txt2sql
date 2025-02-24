@@ -8,9 +8,15 @@
       },
       {
         "name": "float_comparison",
-        "prediction": [{"val": 1.00000000001}],
-        "ground_truth": [{"val": 1.00000000002}],
+        "prediction": [{"val": 1.0000000001}],
+        "ground_truth": [{"val": 1.0000000002}],
         "expected": true
+      },
+      {
+        "name": "float_comparison_false",
+        "prediction": [{"val": 1.0000000001}],
+        "ground_truth": [{"val": 1.0000000011}],
+        "expected": false
       }
     ],
     "different_orders": [

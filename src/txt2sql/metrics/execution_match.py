@@ -40,7 +40,7 @@ class ComparableTuple:
 
     def __hash__(self):
         # Convert floats to strings with limited precision for hashing
-        processed = tuple(f"{x:.10f}" if isinstance(x, float) else x for x in self.data)
+        processed = tuple(f"{x:.8f}" if isinstance(x, float) else x for x in self.data)
         return hash(processed)
 
 
