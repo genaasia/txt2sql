@@ -30,9 +30,9 @@ from txt2sql.metrics import execution_match, intent_match, soft_f1, sql_match
 # Example SQL queries
 prediction_query = "SELECT id, column_1, column_2 FROM example_data WHERE id IN (1, 2)"
 ground_truth_query = "SELECT id, column_1 FROM example_data WHERE id IN (1, 2)"
-ground_truth_query_variation = """SELECT id , column_1
-FROM   example_data
-WHERE  id IN (1 , 2)"""
+ground_truth_query_variation = """select id , column_1
+from   example_data
+where  id in (1 , 2)"""
 
 # Example execution results
 prediction = [
@@ -102,7 +102,6 @@ The intent match metric evaluates whether the predicted results satisfy the sema
 Derived from intent match description from the paper "NL2SQL is a solved problem... Not!"
 https://www.cidrdb.org/cidr2024/papers/p74-floratou.pdf
 
-
 This implementation of the intent match allows for different formattings for date columns, optionally. Doesn't support hand made rules. Doesn't have side effects on the input data.
 ```python
 from txt2sql.metrics import intent_match
@@ -130,12 +129,11 @@ def intent_match(
 
 The soft F1 score provides a continuous measure of similarity between two result sets, useful for evaluating partial matches and ranking different predictions.
 
-Original implementation changes the ordering of rows that have partial matching,
-so results in wrong scores.
-Also it depends on sorting based on hash values which changes every run,
-so it is non-deterministic score.
+This implementation builds upon previous approaches and introduces several refinements:
+Preserves row ordering during duplicate removal to ensure consistent scoring
+Uses a deterministic comparison approach that doesn't rely on hash-based sorting
+Provides flexibility to evaluate results with or without considering row order
 
-This version removes duplicates without changing the ordering, so it doesn't have the problems in the original implementation, also supports checking for ordered and unordered comparison.
 
 ```python
 from txt2sql.metrics import soft_f1
@@ -159,19 +157,15 @@ def soft_f1(
 ```
 
 
-## Citation
+## References
 
-If you use this package in your research, please cite:
+The implementations in this package build upon approaches from several open source projects:
 
-```bibtex
-@misc{txt2sql2025,
-  author = {OUR NAMES GO HERE ?},
-  title = {txt2sql: A Python Package for Text-to-SQL Evaluation},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/username/txt2sql}
-}
-```
+- **Execution Match**: Based on the [BIRD benchmark execution match evaluation](https://github.com/bird-bench/mini_dev/blob/main/evaluation/evaluation_ex.py)
+- **Soft F1 Score**: Based on the [BIRD Soft F1 evaluation implementation](https://github.com/bird-bench/mini_dev/blob/main/evaluation/evaluation_f1.py)
+- **Intent Match**: Based on the [Archerfish benchmark result set matching](https://github.com/archerfish-bench/benchmark/blob/main/src/benchmark/utils/result_set_match.py)
+
+We appreciate the contributions of these projects to the Text-to-SQL space.
 
 ## License
 

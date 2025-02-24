@@ -4,15 +4,13 @@ based on the execution results as list of Python dictionaries.
 Gives a continous value for similarity of two execution results,
 based on the definition here: https://github.com/bird-bench/mini_dev
 
-Original implementation changes the ordering of rows that have partial matching,
-so results in wrong scores.
-Also it depends on sorting based on hash values which changes every run,
-so it is non-deterministic score.
+We found that since original implementation was relying on sorting based on hashing,
+it resulted in undeterministic behaviour in same cases with partial matching rows.
 
-This version:
-Removes duplicates without changing the ordering,
-so it doesn't have the problems in the original implementation,
-also supports checking for ordered and unordered comparison.
+This implementation tries to enhance stability and flexibility:
+- Preserves row order during duplicate removal
+- Uses a deterministic comparison approach
+- Supports both ordered and unordered result comparison modes
 """
 
 from typing import Any, Dict, List, Tuple
