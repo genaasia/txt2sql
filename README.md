@@ -156,6 +156,26 @@ def soft_f1(
     """
 ```
 
+## Development
+
+### Running Tests
+
+The package uses pytest for testing. To run the tests, first install the package with test dependencies:
+
+```bash
+pip install -e ".[test]"
+```
+
+Then run the tests with coverage report:
+
+```bash
+pytest
+```
+
+This will run all tests and generate both a terminal coverage report and an HTML coverage report in the `htmlcov` directory.
+
+The test suite includes comprehensive test cases for all metrics, stored as JSON files in `tests/metrics/test_data/`. You can examine these test cases to better understand how each metric behaves in different scenarios.
+
 
 ## References
 
