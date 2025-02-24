@@ -13,6 +13,12 @@
         "expected": true
       },
       {
+        "name": "float_comparison_different order",
+        "prediction": [{"val": 1.0000000001, "val2":"tet"}],
+        "ground_truth": [{"val2":"tet", "val": 1.0000000002}],
+        "expected": false
+      },
+      {
         "name": "float_comparison_false",
         "prediction": [{"val": 1.0000000001}],
         "ground_truth": [{"val": 1.0000000011}],
