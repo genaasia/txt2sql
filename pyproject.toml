@@ -19,7 +19,8 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "sqlfluff==3.3.1"
+  "sqlfluff==3.3.1",
+  "sqlparse==0.5.3"
 ]
 
 [project.optional-dependencies]
@@ -31,3 +32,4 @@ test = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+addopts = "--cov=txt2sql --cov-report=html --cov-report=term-missing"
