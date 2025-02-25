@@ -1,0 +1,88 @@
+{
+    "perfect_matches": [
+      {
+        "name": "exact_match",
+        "prediction": [{"val": 1, "name": "test"}],
+        "ground_truth": [{"val": 1, "name": "test"}],
+        "ordered": true,
+        "expected": 1.0
+      },
+      {
+        "name": "empty_sets",
+        "prediction": [],
+        "ground_truth": [],
+        "ordered": true,
+        "expected": 1.0
+      }
+    ],
+    "partial_matches": [
+      {
+        "name": "one_column_different",
+        "prediction": [
+          {"val": 1, "name": "test"},
+          {"val": 2, "name": "wrong"}
+        ],
+        "ground_truth": [
+          {"val": 1, "name": "test"},
+          {"val": 2, "name": "right"}
+        ],
+        "ordered": true,
+        "expected": 0.75
+      },
+      {
+        "name": "partial_row_match",
+        "prediction": [{"val": 1, "name": "test", "score": 100}],
+        "ground_truth": [{"val": 1, "name": "test", "score": 90}],
+        "ordered": true,
+        "expected": 0.67
+      }
+    ],
+    "order_sensitivity": [
+      {
+        "name": "different_order_ordered_comparison",
+        "prediction": [{"val": 2}, {"val": 1}],
+        "ground_truth": [{"val": 1}, {"val": 2}],
+        "ordered": true,
+        "expected": 0.0
+      },
+      {
+        "name": "different_order_unordered_comparison",
+        "prediction": [{"val": 2}, {"val": 1}],
+        "ground_truth": [{"val": 1}, {"val": 2}],
+        "ordered": false,
+        "expected": 1.0
+      }
+    ],
+    "size_mismatches": [
+      {
+        "name": "missing_prediction",
+        "prediction": [{"val": 1}],
+        "ground_truth": [{"val": 1}, {"val": 2}],
+        "ordered": true,
+        "expected": 0.6666
+      },
+      {
+        "name": "extra_prediction",
+        "prediction": [{"val": 1}, {"val": 2}, {"val": 3}],
+        "ground_truth": [{"val": 1}, {"val": 2}],
+        "ordered": true,
+        "expected": 0.8
+      }
+    ],
+    "no_matches": [
+      {
+        "name": "completely_different",
+        "prediction": [{"val": 1}, {"val": 2}],
+        "ground_truth": [{"val": 3}, {"val": 4}],
+        "ordered": true,
+        "expected": 0.0
+      },
+      {
+        "name": "empty_vs_nonempty",
+        "prediction": [],
+        "ground_truth": [{"val": 1}],
+        "ordered": true,
+        "expected": 0.0
+      }
+    ]
+  }
