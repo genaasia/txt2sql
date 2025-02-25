@@ -1,6 +1,3 @@
-import io
-from contextlib import redirect_stdout
-
 import sqlfluff
 import sqlparse
 
@@ -8,9 +5,7 @@ import sqlparse
 def normalize_query(query: str, dialect: str) -> str:
     """Normalize spacing, casing, identation etc. and remove comments from a SQL query"""
     try:
-        f = io.StringIO()
-        with redirect_stdout(f):
-            formatted_query = sqlfluff.fix(query, dialect=dialect)
+        formatted_query = sqlfluff.fix(query, dialect=dialect)
         formatted_query = sqlparse.format(
             formatted_query,
             strip_comments=True,
