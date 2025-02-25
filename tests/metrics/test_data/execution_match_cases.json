@@ -1,0 +1,44 @@
+{
+    "exact_matches": [
+      {
+        "name": "simple_exact_match",
+        "prediction": [{"val": 1, "name": "test"}],
+        "ground_truth": [{"val": 1, "name": "test"}],
+        "expected": true
+      },
+      {
+        "name": "float_comparison",
+        "prediction": [{"val": 1.0000000001}],
+        "ground_truth": [{"val": 1.0000000002}],
+        "expected": true
+      },
+      {
+        "name": "float_comparison_different order",
+        "prediction": [{"val": 1.0000000001, "val2":"tet"}],
+        "ground_truth": [{"val2":"tet", "val": 1.0000000002}],
+        "expected": false
+      },
+      {
+        "name": "float_comparison_false",
+        "prediction": [{"val": 1.0000000001}],
+        "ground_truth": [{"val": 1.0000000011}],
+        "expected": false
+      }
+    ],
+    "different_orders": [
+      {
+        "name": "same_values_different_order",
+        "prediction": [{"val": 1}, {"val": 2}],
+        "ground_truth": [{"val": 2}, {"val": 1}],
+        "expected": true
+      }
+    ],
+    "mismatches": [
+      {
+        "name": "different_values",
+        "prediction": [{"val": 1}],
+        "ground_truth": [{"val": 2}],
+        "expected": false
+      }
+    ]
+  }
