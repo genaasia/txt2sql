@@ -1,3 +1,5 @@
+"""Dataloader module for txt2sql; class-based interface for loading and processing datasets."""
+
 import os
 import json
 import shutil
@@ -16,32 +18,40 @@ SPIDER_DOWNLOAD_URL = "https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7d
 
 
 class DataLoader(ABC):
+    """Abstract base class for Dataloaders."""
+
     def __init__(self, base_path: str):
+        """Initialize the DataLoader with the base path to the dataset."""
         if not os.path.isdir(base_path):
             raise NotADirectoryError(f"base_path '{base_path}' is not a directory")
         self.base_path = base_path
-        self.splits: dict[str, list] = dict()
+        self.splits: dict[str, list] = {}
 
     @classmethod
     @abstractmethod
     def download(cls):
+        """download the dataset"""
         pass
 
     def list_splits(self) -> list[str]:
+        """list the dataset's supported splits"""
         return sorted(list(self.splits.keys()))
 
     def _postprocess(self, sample: dict, include_metadata: bool = False) -> dict:
+        """optionally remove metadata from the sample"""
         sample = sample.copy()
         if not include_metadata:
             sample.pop("metadata", None)
         return sample
 
     def get_split(self, split: str, include_metadata: bool = False) -> list[dict]:
+        """get the list of samples for a given split"""
         if split not in self.list_splits():
             raise ValueError(f"split '{split}' not supported")
         return [self._postprocess(sample, include_metadata=include_metadata) for sample in self.splits[split]]
 
     def get_sample(self, split: str, question_id: int, include_metadata: bool = False) -> dict:
+        """get a specific sample from a given split by question_id"""
         samples = self.splits[split]
         for sample in samples:
             if sample["question_id"] == question_id:
@@ -50,10 +60,12 @@ class DataLoader(ABC):
 
     @abstractmethod
     def get_dataset(self, split: str) -> SqliteDataset:
+        """get a Dataset object for a given split"""
         pass
 
 
 class BirdDataLoader(DataLoader):
+    """DataLoader for the BIRD dataset."""
 
     dset_info = {
         "train": {
@@ -69,6 +81,7 @@ class BirdDataLoader(DataLoader):
     }
 
     def __init__(self, base_path: str):
+        """initialize a BIRD dataloader"""
         super().__init__(base_path)
         # check base_path exists, if not, prompt to download
         self.base_path = base_path
@@ -81,6 +94,7 @@ class BirdDataLoader(DataLoader):
 
     @classmethod
     def download(cls, base_path: str, train_url: str | None = None, dev_url: str | None = None):
+        """download the BIRD dataset (train and dev) if it does not exist"""
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         cls.download_split(base_path, "train", train_url)
@@ -89,6 +103,7 @@ class BirdDataLoader(DataLoader):
 
     @classmethod
     def download_split(cls, base_path: str, split: str, url: str | None):
+        """download one split of the BIRD dataset if it does not exist"""
         if not url:
             url = cls.dset_info[split]["url"]
         split_subdir = cls.dset_info[split]["subdir"]
@@ -120,9 +135,10 @@ class BirdDataLoader(DataLoader):
         return
 
     @classmethod
-    def check_subset(self, base_path: str, split: str) -> tuple[bool, str]:
-        subset_dir: str = self.dset_info[split]["subdir"]
-        expected = self.dset_info[split]["expected_dbs"]
+    def check_subset(cls, base_path: str, split: str) -> tuple[bool, str]:
+        """verify one split (train, dev) of the BIRD dataset"""
+        subset_dir: str = cls.dset_info[split]["subdir"]
+        expected = cls.dset_info[split]["expected_dbs"]
         if not os.path.exists(base_path):
             return False, f"base_path '{base_path}' does not exist"
         # check subset_dir exists
@@ -149,6 +165,7 @@ class BirdDataLoader(DataLoader):
         return True, "all checks passed"
 
     def check_data(self):
+        """verify the BIRD dataset contents"""
         all_ok = True
         for split in self.dset_info:
             split_ok, split_msg = self.check_subset(self.base_path, split)
@@ -160,9 +177,10 @@ class BirdDataLoader(DataLoader):
         return all_ok
 
     def _process_split(self, samples: list[dict]) -> list[dict]:
-        formatted_samples: list[dict] = list()
+        """format and standarize the samples for the BIRD dataset"""
+        formatted_samples: list[dict] = []
         for idx, sample in enumerate(samples):
-            formatted_sample = dict()
+            formatted_sample = {}
             if "question_id" in sample:
                 formatted_sample["question_id"] = sample["question_id"]
             else:
@@ -171,7 +189,7 @@ class BirdDataLoader(DataLoader):
             formatted_sample["question"] = sample["question"]
             formatted_sample["evidence"] = sample["evidence"]
             formatted_sample["sql"] = sample["SQL"]
-            metadata = dict()
+            metadata = {}
             for key, value in sample.items():
                 if key not in formatted_sample:
                     metadata[key] = value
@@ -180,6 +198,7 @@ class BirdDataLoader(DataLoader):
         return formatted_samples
 
     def _load_data(self):
+        """load the BIRD train and dev datasets"""
         # load train.json from train directory
         train_json_path = os.path.join(self.base_path, self.dset_info["train"]["subdir"], "train.json")
         with open(train_json_path, "r") as f:
@@ -193,6 +212,7 @@ class BirdDataLoader(DataLoader):
         return {"train": train_data, "dev": dev_data}
 
     def get_dataset(self, split: str) -> SqliteDataset:
+        """get a Dataset object for a given split"""
         if split not in self.list_splits():
             raise ValueError(f"split '{split}' not supported")
         split_dir: str = self.dset_info[split]["subdir"]
@@ -210,6 +230,7 @@ class BirdDataLoader(DataLoader):
 
 
 class SpiderDataLoader(DataLoader):
+    """DataLoader for the SPIDER dataset."""
 
     dset_default_url = SPIDER_DOWNLOAD_URL
     database_count = 166
@@ -217,6 +238,7 @@ class SpiderDataLoader(DataLoader):
 
     def __init__(self, base_path: str):
         super().__init__(base_path)
+        """initialize a SPIDER dataloader"""
         # check base_path exists, if not, prompt to download
         self.base_path = base_path
         if not os.path.exists(self.base_path):
@@ -228,6 +250,7 @@ class SpiderDataLoader(DataLoader):
 
     @classmethod
     def download(cls, base_path: str, url: str | None = None):
+        """download the SPIDER dataset if it does not exist"""
         # first, check if all datasets already exist
         try:
             cls.check_spider(base_path)
@@ -258,6 +281,7 @@ class SpiderDataLoader(DataLoader):
 
     @classmethod
     def check_spider(self, base_path: str) -> tuple[bool, str]:
+        """verify the SPIDER dataset contents"""
         # check dev.json, test.json, train_spider.json and train_others.json exist in base_path
         if not os.path.exists(base_path):
             raise ValueError(f"base_path '{base_path}' does not exist")
@@ -301,18 +325,20 @@ class SpiderDataLoader(DataLoader):
         return True
 
     def check_data(self):
+        """verify the SPIDER dataset contents (generic function name)"""
         self.check_spider(self.base_path)
         return True
 
     def _process_split(self, samples: list[dict]) -> list[dict]:
-        formatted_samples: list[dict] = list()
+        """format and standarize the samples for the SPIDER dataset"""
+        formatted_samples: list[dict] = []
         for idx, sample in enumerate(samples):
-            formatted_sample = dict()
+            formatted_sample = {}
             formatted_sample["question_id"] = idx
             formatted_sample["db_id"] = sample["db_id"]
             formatted_sample["question"] = sample["question"]
             formatted_sample["sql"] = sample["query"]
-            metadata = dict()
+            metadata = {}
             for key, value in sample.items():
                 if key not in formatted_sample:
                     metadata[key] = value
@@ -321,6 +347,7 @@ class SpiderDataLoader(DataLoader):
         return formatted_samples
 
     def _load_data(self) -> list[dict]:
+        """load the SPIDER train, dev and test datasets"""
         # train_spider.json as train
         train_spider_json_path = os.path.join(self.base_path, "train_spider.json")
         with open(train_spider_json_path, "r") as f:
@@ -344,6 +371,7 @@ class SpiderDataLoader(DataLoader):
         return {"train": train_spider_data, "train-other": train_others_data, "dev": dev_data, "test": test_data}
 
     def get_dataset(self, split: str) -> SqliteDataset:
+        """get a Dataset object for a given split"""
         if split not in self.list_splits():
             raise ValueError(f"split '{split}' not supported")
         if split == "test":
@@ -363,11 +391,13 @@ class SpiderDataLoader(DataLoader):
 
 
 class BullDataLoader(DataLoader):
+    """DataLoader for the BULL dataset."""
 
     dset_default_url = BULL_DOWNLOAD_URL
     database_count = 3
 
     def __init__(self, base_path: str, language: str = "en", rename_bad_files: bool = True):
+        """initialize a BULL dataloader"""
         super().__init__(base_path)
         if language not in ["en", "cn"]:
             raise ValueError(f"language '{language}' not supported, only 'en' and 'cn' supported")
@@ -389,6 +419,7 @@ class BullDataLoader(DataLoader):
 
     @classmethod
     def download(cls, base_path: str, url: str | None = None, rename_bad_files: bool = True):
+        """download the BULL dataset if it does not exist"""
         # first, check if all datasets already exist
         try:
             cls.check_bull(base_path, rename_bad_files=rename_bad_files)
@@ -424,6 +455,7 @@ class BullDataLoader(DataLoader):
 
     @classmethod
     def check_bull(self, base_path: str, rename_bad_files: bool) -> tuple[bool, str]:
+        """verify the BULL dataset contents"""
         if not os.path.exists(base_path):
             raise ValueError(f"base_path '{base_path}' does not exist")
         # for language in en, cn, check dir 'BULL-<lang> exists
@@ -469,18 +501,20 @@ class BullDataLoader(DataLoader):
         return True
 
     def check_data(self):
+        """verify the BULL dataset contents (generic function name)"""
         self.check_bull(self.base_path, self.rename_bad_files)
         return True
 
     def _process_split(self, samples: list[dict]) -> list[dict]:
-        formatted_samples: list[dict] = list()
+        """format and standarize the samples for the BULL dataset"""
+        formatted_samples: list[dict] = []
         for idx, sample in enumerate(samples):
-            formatted_sample = dict()
+            formatted_sample = {}
             formatted_sample["question_id"] = sample["q_id"]
             formatted_sample["db_id"] = sample["db_name"]
             formatted_sample["question"] = sample["question"]
             formatted_sample["sql"] = sample["sql_query"]
-            metadata = dict()
+            metadata = {}
             for key, value in sample.items():
                 if key not in formatted_sample:
                     metadata[key] = value
@@ -489,9 +523,10 @@ class BullDataLoader(DataLoader):
         return formatted_samples
 
     def _load_data(self) -> dict[list[dict]]:
-        data = dict()
-        data["train"] = dict()
-        data["dev"] = dict()
+        """load the BULL train and dev datasets for the target language"""
+        data = {}
+        data["train"] = {}
+        data["dev"] = {}
         # train.json as train
         train_json_path = os.path.join(self.base_path, f"BULL-{self.language}", "train.json")
         with open(train_json_path, "r") as f:
@@ -505,6 +540,7 @@ class BullDataLoader(DataLoader):
         return {"train": train_data, "dev": dev_data}
 
     def get_dataset(self, split: str) -> SqliteDataset:
+        """get a Dataset object for a given split"""
         if split not in self.list_splits():
             raise ValueError(f"split '{split}' not supported")
         if self.language == "en":
