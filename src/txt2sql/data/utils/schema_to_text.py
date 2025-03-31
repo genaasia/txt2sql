@@ -1,3 +1,5 @@
+"""functions for converting schema dictionary to text formats"""
+
 from typing import Any
 
 

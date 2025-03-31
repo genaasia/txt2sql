@@ -1,3 +1,5 @@
+"""SQLite utility functions for querying and schema extraction."""
+
 import os
 import sqlite3
 
