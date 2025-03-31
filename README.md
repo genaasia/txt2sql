@@ -9,6 +9,8 @@ Currently this package provides robust implementations of execution match, inten
 
 ## Features
 
+- **Data Loaders**: Download, load, and preprocess popular text-to-SQL datasets (currently BIRD, SPIDER, BULL) 
+- **Datasets**: Query multi-databases `sqlite` datasets with a simple interface 
 - **Execution Match**: Compare execution results with float tolerance handling
 - **Intent Match**: Evaluate semantic equivalence of results with flexible matching rules
 - **Soft F1 Score**: Calculate continuous similarity scores between result sets
@@ -23,6 +25,49 @@ pip install txt2sql
 ```
 
 ## Quick Start
+
+### Loading the BIRD dataset using txt2sql DataLoader
+
+The `DataLoader` API provides functionality for downloading datasets, verifying their contents, loading data in a standardized format, and getting `Dataset`s.
+
+```python
+from txt2sql.data.dataloaders import BirdDataLoader
+
+# use the download() class method to download the dataset
+target_dir = "./bird_dataset"
+BirdDataLoader.download(target_dir)
+
+# after downloading, create a BirdDataLoader to load the data
+# keys are standarized to 'question_id', 'db_id', 'question', 'evidence' (if any), and 'sql'
+bird_dataloader = BirdDataLoader(target_dir)
+
+# use get_split() method to get data. you can see included splits with list_splits() method.
+bird_train: list[dict] = bird_dataloader.get_split("train")
+
+# get a txt2sql.data.datasets.SqliteDataset dataset object, to make queries
+bird_train_dataset = bird_dataloader.get_dataset("dev")
+```
+
+### Querying the BIRD dataset using txt2sql Dataset
+
+The `Dataset` API provides objects for querying multi-file `sqlite` datasets like BIRD and SPIDER.
+
+You can create a `SQLiteDataset` by pointing it to the base directory containing the `sqlite` files, or you can use the `DataLoader` API to get a `Dataset` object alongside the text-SQL pair data.
+
+```python
+from txt2sql.data.datasets import SqliteDataset
+
+# point it towards the base directory that contains the individual database directories
+base_dir = "./bird_dataset/dev_20240627/dev_databases"
+bird_dev_dataset = SqliteDataset(base_dir)
+
+# query one of the databases by using query_database() with db name and the target query
+query = "SELECT sname FROM satscores WHERE cname = 'Contra Costa' AND sname IS NOT NULL ORDER BY NumTstTakr DESC LIMIT 1"
+output = bird_dev_dataset.query_database("california_schools", query)
+```
+
+
+### Using metrics to evaluate text-to-sql outputs
 
 ```python
 from txt2sql.metrics import execution_match, intent_match, soft_f1, sql_match
