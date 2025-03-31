@@ -1,11 +1,13 @@
+"""functions for downloading dataset files"""
+
 import os
 import mimetypes
 import re
 
+from urllib.parse import unquote, urlparse
+
 import httpx
 import tqdm
-
-from urllib.parse import unquote, urlparse
 
 
 def extract_file_id_from_google_drive_link(link):
@@ -129,9 +131,8 @@ def download_from_google_drive(download_url: str, base_path: str):
     if os.path.exists(destination) and os.path.getsize(destination) > 0:
         print(f"File downloaded successfully to {destination}")
         return destination
-    else:
-        print("Download appears to have failed. Check the file.")
-        return None
+    print("Download appears to have failed. Check the file.")
+    return None
 
 
 def download_from_url(download_url: str, base_path: str):
@@ -202,13 +203,11 @@ def download_from_url(download_url: str, base_path: str):
     if os.path.exists(destination) and os.path.getsize(destination) > 0:
         print(f"File downloaded successfully to {destination}")
         return destination
-    else:
-        print("Download appears to have failed. Check the file.")
-        return None
+    print("Download appears to have failed. Check the file.")
+    return None
 
 
 def download_link(download_url: str, base_path: str):
     if "google.com" in download_url:
         return download_from_google_drive(download_url, base_path)
-    else:
-        return download_from_url(download_url, base_path)
+    return download_from_url(download_url, base_path)
