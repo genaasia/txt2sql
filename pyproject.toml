@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "txt2sql"
-version = "0.1.0"
+version = "0.2.0"
 description = "An open source package for all your txt2sql needs."
 readme = "README.md"
 requires-python = ">=3.7"
@@ -19,6 +19,17 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "requests>=2.0.0"
+  "sqlfluff==3.3.1",
+  "sqlparse==0.5.3"
 ]
 
+[project.optional-dependencies]
+test = [
+  "pytest>=7.0.0",
+  "pytest-cov>=3.0.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=txt2sql --cov-report=html --cov-report=term-missing"
