@@ -19,8 +19,11 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "sqlfluff==3.3.1",
-  "sqlparse==0.5.3"
+  "func_timeout>=4.3.5",
+  "httpx>=0.28.1",
+  "sqlfluff>=3.3.1",
+  "sqlparse>=0.5.3",
+  "tqdm>=4.66.5"
 ]
 
 [project.optional-dependencies]
