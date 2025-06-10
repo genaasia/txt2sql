@@ -86,7 +86,7 @@ def intent_match(
                 )
             if isinstance(ground_truth_val, str):
                 ground_truth_val = formatting_memory.setdefault(
-                    predicted_val, parse_date_string(ground_truth_val)
+                    ground_truth_val, parse_date_string(ground_truth_val)
                 )
 
         if (predicted_val is None or predicted_val == 0) and (
