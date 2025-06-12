@@ -14,6 +14,7 @@ import decimal
 from datetime import datetime
 from typing import Any, Dict, List
 
+import numpy as np
 from .utils import remove_duplicates
 
 
@@ -54,6 +55,7 @@ def intent_match(
     prediction: List[Dict[str, Any]],
     ground_truth: List[Dict[str, Any]],
     normalize_dates: bool = False,
+    use_dynamic_precision: bool = False,
 ) -> bool:
     """Check if prediction satisfies the intent in the ground truth.
     Row counts should be same but order doesn't matter.
@@ -96,9 +98,20 @@ def intent_match(
         if isinstance(predicted_val, (int, float, decimal.Decimal)) and isinstance(
             ground_truth_val, (int, float, decimal.Decimal)
         ):
-            return ground_truth_val is not None and (
-                round(float(predicted_val), 1) == round(float(ground_truth_val), 1)
-            )
+            if use_dynamic_precision:
+                # Dynamic precision based on value size
+                precision = 1
+                if predicted_val >= 100:
+                    precision = 0
+                atol = 0.5 * (10 ** -precision)
+                return ground_truth_val is not None and (
+                    np.isclose(float(predicted_val), float(ground_truth_val), atol=atol, rtol=0)
+                )
+            else:
+                # Fixed precision of 1 decimal place
+                return ground_truth_val is not None and (
+                    np.isclose(float(predicted_val), float(ground_truth_val), atol=0.05, rtol=0)
+                )
         return str(predicted_val) == str(ground_truth_val)
 
     def match_all_cols(expected_row, actual_row):
