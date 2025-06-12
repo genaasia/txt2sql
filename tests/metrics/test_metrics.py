@@ -29,6 +29,7 @@ def test_intent_match(case):
         case["prediction"],
         case["ground_truth"],
         normalize_dates=case.get("normalize_dates", False),
+        use_dynamic_precision=case.get("use_dynamic_precision", False),
     )
     assert result == case["expected"], f"Failed on case: {case['name']}"
 
