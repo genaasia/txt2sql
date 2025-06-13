@@ -13,6 +13,7 @@ Currently this package provides robust implementations of execution match, inten
 - **Datasets**: Query multi-databases `sqlite` datasets with a simple interface 
 - **Execution Match**: Compare execution results with float tolerance handling
 - **Intent Match**: Evaluate semantic equivalence of results with flexible matching rules
+- **Essence Match**: More flexible version of intent match
 - **Soft F1 Score**: Calculate continuous similarity scores between result sets
 - **SQL Match**: Compare SQL queries with spacing tolerance handling
 
@@ -169,6 +170,39 @@ def intent_match(
     """
 ```
 
+### Essence Match
+
+The essence match metric is derived from intent match, it provides more flexible comparison of execution results. It automatically handles different date formats and uses dynamic precision for numeric values based on their magnitude.
+
+Key features:
+- Automatic date format normalization
+- Dynamic precision handling for numeric values (more precise for smaller numbers)
+- Uses numpy's isclose for robust numeric comparisons
+- Allows for different column names and ordering
+- Supports different data type representations of the same values
+
+```python
+from txt2sql.metrics import essence_match
+
+def essence_match(
+    prediction: List[Dict[str, Any]],
+    ground_truth: List[Dict[str, Any]],
+    normalize_dates: bool = True,
+    use_dynamic_precision: bool = True
+) -> bool:
+    """
+    Check if prediction satisfies the essence in the ground truth.
+    
+    Args:
+        prediction: List of dictionaries containing the predicted execution results
+        ground_truth: List of dictionaries containing the expected execution results
+        normalize_dates: Whether to normalize different date formats before comparison
+        use_dynamic_precision: Whether to use dynamic precision based on value magnitude
+        
+    Returns:
+        bool: True if the results match the intent, False otherwise
+    """
+```
 
 ### Soft F1 Score
 

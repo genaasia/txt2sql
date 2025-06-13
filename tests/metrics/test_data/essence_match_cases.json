@@ -1,0 +1,167 @@
+{
+    "basic_matches": [
+      {
+        "name": "exact_match",
+        "prediction": [{"val": 1, "name": "test"}],
+        "ground_truth": [{"val": 1, "name": "test"}],
+        "expected": true
+      },
+      {
+        "name": "case_insensitive_match",
+        "prediction": [{"NAME": "John", "AGE": 30}],
+        "ground_truth": [{"name": "John", "age": 30}],
+        "expected": true
+      }
+    ],
+    "numeric_precision": [
+    {
+      "name": "fixed_precision_small_numbers",
+      "prediction": [{"val": 1.234}],
+      "ground_truth": [{"val": 1.2}],
+      "expected": true
+    },
+    {
+      "name": "fixed_precision_large_numbers",
+      "prediction": [{"val": 123.456}],
+      "ground_truth": [{"val": 123.4}],
+      "use_dynamic_precision": false,
+      "expected": false
+    },
+    {
+      "name": "fixed_precision_large_numbers",
+      "prediction": [{"val": 123.456}],
+      "ground_truth": [{"val": 123.4}],
+      "expected": true
+    },
+    {
+      "name": "dynamic_precision_small_numbers",
+      "prediction": [{"val": 1.234}],
+      "ground_truth": [{"val": 1.2}],
+      "expected": true
+    },
+    {
+      "name": "dynamic_precision_large_numbers",
+      "prediction": [{"val": 123.456}],
+      "ground_truth": [{"val": 123}],
+      "expected": true
+    },
+    {
+      "name": "fixed_precision_mismatch",
+      "prediction": [{"val": 1.234}],
+      "ground_truth": [{"val": 1.3}],
+      "expected": false
+    },
+    {
+      "name": "dynamic_precision_mismatch",
+      "prediction": [{"val": 123.456}],
+      "ground_truth": [{"val": 124}],
+      "expected": false
+    }
+  ], "different_col_names": [
+    {
+      "name": "different_col_name",
+      "prediction": [{"NAME": "John", "AGE": 30}, {"NAME": "James", "AGE": 40}],
+      "ground_truth": [{"full_name": "John", "years_old": 30}, {"full_name": "James", "years_old": 40}],
+      "expected": true
+    }
+  ],
+  "different_orderings": [
+    {
+      "name": "exact_match_reverse",
+      "prediction": [{"val": 1, "name": "test"}, {"val": 2, "name": "test_2"}],
+      "ground_truth": [{"val": 2, "name": "test_2"}, {"val": 1, "name": "test"}],
+      "expected": true
+    },
+    {
+      "name": "case_insensitive_reverse",
+      "prediction": [{"NAME": "John", "AGE": 30}, {"NAME": "James", "AGE": 40}],
+      "ground_truth": [{"NAME": "James", "AGE": 40}, {"NAME": "John", "AGE": 30}],
+      "expected": true
+    },
+    {
+      "name": "different_col_name_reverse",
+      "prediction": [{"NAME": "John", "AGE": 30}, {"NAME": "James", "AGE": 40}],
+      "ground_truth": [{"full_name": "James", "years_old": 40}, {"full_name": "John", "years_old": 30}],
+      "expected": true
+    }
+  ],
+  "date_formats": [
+    {
+      "name": "different_date_formats",
+      "prediction": [{"date": "2023-10-01"}],
+      "ground_truth": [{"date": "2023-10-01T00:00:00"}],
+      "normalize_dates": true,
+      "expected": true
+    },
+    {
+      "name": "year_month_format",
+      "prediction": [{"date": "2023-10"}],
+      "ground_truth": [{"date": "2023-10-01"}],
+      "normalize_dates": true,
+      "expected": true
+    },
+    {
+      "name": "date_format_w_no_date_string",
+      "prediction": [{"val": 1, "name": "test"}],
+      "ground_truth": [{"val": 1, "name": "test"}],
+      "normalize_dates": true,
+      "expected": true
+    }
+  ],
+  "type_conversions": [
+    {
+      "name": "int_float_match",
+      "prediction": [{"val": 1}],
+      "ground_truth": [{"val": 1.0}],
+      "expected": true
+    },
+    {
+      "name": "null_zero_equivalence",
+      "prediction": [{"val": null}],
+      "ground_truth": [{"val": 0}],
+      "expected": true
+    }
+  ],
+  "string_handling": [
+    {
+      "name": "quote_removal",
+      "prediction": [{"name": "\"John\""}],
+      "ground_truth": [{"name": "John"}],
+      "expected": true
+    },
+    {
+      "name": "multiple_quotes",
+      "prediction": [{"name": "\"\"John\"\""}],
+      "ground_truth": [{"name": "John"}],
+      "expected": true
+    }
+  ],
+  "mismatches": [
+    {
+      "name": "different_values",
+      "prediction": [{"val": 1}],
+      "ground_truth": [{"val": 2}],
+      "expected": false
+    },
+    {
+      "name": "different_row_counts",
+      "prediction": [{"val": 1}, {"val": 2}],
+      "ground_truth": [{"val": 1}],
+      "expected": false
+    }
+  ],
+  "one_to_many_matches": [
+    {
+      "name": "one_to_many_match",
+      "prediction": [{"val": 1, "name": "test"}],
+      "ground_truth": [{"val": 1, "name": "test"}, {"val": 1, "name": "test"}],
+      "expected": false
+    },
+    {
+      "name": "one_to_many_match_same_length",
+      "prediction": [{"val": 1, "name": "test"}, {"val": 2, "name": "test_2"}],
+      "ground_truth": [{"val": 1, "name": "test"}, {"val": 1, "name": "test"}],
+      "expected": false
+    }
+  ]
+}

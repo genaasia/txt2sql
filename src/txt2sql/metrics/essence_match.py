@@ -1,27 +1,26 @@
-"""Intent match metric for evaluating Text-to-SQL models,
+"""Essence match metric for evaluating Text-to-SQL models,
 based on the execution results as list of Python dictionaries.
 
-Derived from intent match description from the paper NL2SQL is a solved problem... Not!
-https://www.cidrdb.org/cidr2024/papers/p74-floratou.pdf
-
-This version:
-Allows for different formattings for date columns, optionally.
-Doesn't support rules. 
-Doesn't have side effects.
+Derived from intent match. Essence match allows different formatting for date columns.
+It also allows for dynamic precision for numeric values.
+Uses closeness comparison for numeric values instead of rounding to handle edge cases.
 """
 
 import decimal
 from typing import Any, Dict, List
 
+import numpy as np
+
 from .utils import normalize_dict, parse_date_string, remove_duplicates
 
 
-def intent_match(
+def essence_match(
     prediction: List[Dict[str, Any]],
     ground_truth: List[Dict[str, Any]],
-    normalize_dates: bool = False,
+    normalize_dates: bool = True,
+    use_dynamic_precision: bool = True,
 ) -> bool:
-    """Check if prediction satisfies the intent in the ground truth.
+    """Check if prediction satisfies the essence of ground truth.
     Row counts should be same but order doesn't matter.
     Key names or order doesn't matter.
     Different types of the same values are allowed
@@ -56,8 +55,18 @@ def intent_match(
         if isinstance(predicted_val, (int, float, decimal.Decimal)) and isinstance(
             ground_truth_val, (int, float, decimal.Decimal)
         ):
+            if use_dynamic_precision:
+                # Dynamic precision based on value size
+                precision = 1
+                if predicted_val >= 100:
+                    precision = 0
+                atol = 0.5 * (10**-precision)
+                return ground_truth_val is not None and (
+                    np.isclose(float(predicted_val), float(ground_truth_val), atol=atol, rtol=0)
+                )
+            # Fixed precision of 1 decimal place
             return ground_truth_val is not None and (
-                round(float(predicted_val), 1) == round(float(ground_truth_val), 1)
+                np.isclose(float(predicted_val), float(ground_truth_val), atol=0.05, rtol=0)
             )
         return str(predicted_val) == str(ground_truth_val)
 
