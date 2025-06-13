@@ -20,7 +20,7 @@ def essence_match(
     normalize_dates: bool = True,
     use_dynamic_precision: bool = True,
 ) -> bool:
-    """Check if prediction satisfies the intent in the ground truth.
+    """Check if prediction satisfies the essence of ground truth.
     Row counts should be same but order doesn't matter.
     Key names or order doesn't matter.
     Different types of the same values are allowed
