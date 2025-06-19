@@ -1,6 +1,6 @@
 import pytest
 
-from txt2sql.metrics import execution_match, intent_match, soft_f1, sql_match
+from txt2sql.metrics import execution_match, intent_match, soft_f1, sql_match, essence_match
 
 
 def load_test_cases(file_name):
@@ -29,6 +29,16 @@ def test_intent_match(case):
         case["prediction"],
         case["ground_truth"],
         normalize_dates=case.get("normalize_dates", False),
+    )
+    assert result == case["expected"], f"Failed on case: {case['name']}"
+
+
+@pytest.mark.parametrize("case", load_test_cases("essence_match_cases.json"))
+def test_essence_match(case):
+    result = essence_match(
+        case["prediction"],
+        case["ground_truth"],
+        use_dynamic_precision=case.get("use_dynamic_precision", True),
     )
     assert result == case["expected"], f"Failed on case: {case['name']}"
 
